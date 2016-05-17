@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+        #l-map{height:888px;width:100%;}
+        #r-result,#r-result table{width:100%;}
+
+        .Search{
+            width: 368px;height:120px;position:absolute; top:0px;right: 0px;z-index: 2;background-color: grey;
+            padding-left: 5px;color: white;}
+        .Search_top{text-align:center;height: 20px;font-size: 20px;}
+        .Search_left{width: 80%;height: 120px;float: left}
+        .Search_right{width: 20%;height: 120px;float: left;padding-top: 10px;}
+
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=rodt3mT6Byxa1DXPlre4GrfpFml6BliC"></script>
+    <title>校园内导航</title>
+</head>
+<body>
+<div class="Search">
+    <div class="Search_top">校内导航路径搜索</div>
+    <div class="Search_left">
+        <span style="font-size: 30px;font-weight: bold">起始地:</span>
+        <input id="Start" type="text" style="width:180px; height:25px;font-size: 22px" ><br />
+        <span style="font-size: 30px;font-weight: bold">目的地:</span>
+        <input id="End" type="text" style="width:180px; height:25px;font-size: 22px">
+    </div>
+    <div class="Search_right"><input type="button" name="Routing" style="background:url('images/button.png')no-repeat;
+    background-color:lightgray;height:70px;width:70px"  onclick="mysearch()"  >
+    </div>
+</div>
+<div id="l-map"></div>
+<div id="r-result"></div>
+
+
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("l-map");
+    map.enableScrollWheelZoom();  //滚轮可调
+    var point = new BMap.Point(108.842457,34.13313); //起始点放在广场
+    map.centerAndZoom(point,20);  //等级为20的窗视图窗口
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            var mk = new BMap.Marker(r.point);//基于定位的这个点的点位创建marker
+            map.addOverlay(mk); //将marker作为覆盖物添加到map地图上
+            map.panTo(r.point);//将地图中心点移动到定位的这个点位置。注意是r.point而不是r对象。
+        }
+        else {
+            alert('failed'+this.getStatus());
+        }
+    },{enableHighAccuracy: true})
+
+    function mysearch()
+    {
+        var a="西安电子科技大学南校区"+document.getElementById("Start").value;
+        var b="西安电子科技大学南校区"+document.getElementById("End").value;
+        var walking = new BMap.WalkingRoute(map, {renderOptions: {map: map, panel: "r-result", autoViewport: true}});
+        walking.search(a, b);
+    }
+
+</script>
+</body>
+</html>
